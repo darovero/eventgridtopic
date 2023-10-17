@@ -34,10 +34,9 @@ jobs:
 
   - template: Modules/azurepowershell.yaml
 
-  - task: AzurePowerShell@5
+  - task: PowerShell@2
     displayName: 'Create Event Subscription Script'
     inputs:
       azureSubscription: $(azureSubscription)
-      ScriptPath: '$(Build.SourcesDirectory)/Scripts/event_subs_create.ps1'
-      ScriptArguments: '-resourcegroup "${{parameters.resourcegroup}}" -subscriptionid "${{parameters.subscriptionid}}" -topicname "{{parameters.topicname}}" -storageaccount "{{parameters.storageaccount}}"'
-      azurePowerShellVersion: LatestVersion
+      filePath: '$(Build.SourcesDirectory)/Scripts/event_subs_create.ps1'
+      arguments: '-resourcegroup "${{parameters.resourcegroup}}" -subscriptionid "${{parameters.subscriptionid}}" -topicname "{{parameters.topicname}}" -storageaccount "{{parameters.storageaccount}}"'
