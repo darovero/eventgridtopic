@@ -32,7 +32,16 @@ jobs:
 - job: CreateEventSubscription
   steps:
 
-  - template: Modules/azurepowershell.yaml
+  - task: PowerShell@2
+    displayName: 'Install and Import Azure PowerShell Module'
+    inputs:
+      targetType: 'inline'
+      script: |
+        # Instala el módulo de Azure PowerShell
+        Install-Module -Name Az -Force -AllowClobber -Scope CurrentUser
+
+        # Importa el módulo de Azure PowerShell
+        Import-Module -Name Az
 
   - task: PowerShell@2
     displayName: 'Create Event Subscription Script'
