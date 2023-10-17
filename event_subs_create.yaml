@@ -32,20 +32,12 @@ jobs:
 - job: CreateEventSubscription
   steps:
 
-  - task: PowerShell@2
-    displayName: 'Install and Import Azure PowerShell Module'
-    inputs:
-      targetType: 'inline'
-      script: |
-        # Instala el módulo de Azure PowerShell
-        Install-Module -Name Az -Force -AllowClobber -Scope CurrentUser
-
-        # Importa el módulo de Azure PowerShell
-        Import-Module -Name Az
+  - template: Modules/azurepowershell.yaml
 
   - task: PowerShell@2
     displayName: 'Create Event Subscription Script'
     inputs:
       azureSubscription: $(azureSubscription)
-      filePath: '$(Build.SourcesDirectory)/Scripts/event_subs_create.ps1'
-      arguments: '-resourcegroup "${{parameters.resourcegroup}}" -subscriptionid "${{parameters.subscriptionid}}" -topicname "{{parameters.topicname}}" -storageaccount "{{parameters.storageaccount}}"'
+      ScriptPath: '$(Build.SourcesDirectory)/Scripts/event_subs_create.ps1'
+      ScriptArguments: '-resourcegroup "${{parameters.resourcegroup}}" -subscriptionid "${{parameters.subscriptionid}}" -topicname "{{parameters.topicname}}" -storageaccount "{{parameters.storageaccount}}"'
+      azurePowerShellVersion: LatestVersion
