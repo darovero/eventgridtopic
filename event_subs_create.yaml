@@ -38,6 +38,6 @@ jobs:
     displayName: 'Create Event Subscription Script'
     inputs:
       azureSubscription: $(azureSubscription)
-      ScriptPath: '$(Build.SourcesDirectory)/Templates/Scripts/key_vault_info.ps1'
-      ScriptArguments: '-resourcegroup "${{parameters.resourcegroup}}" -subscriptionid "${{parameters.subscriptionid}} -topicname "{{parameters.topicname}}" -storageaccount "{{parameters.storageaccount}}"'
+      ScriptPath: '$(Build.SourcesDirectory)/Scripts/event_subs_create.ps1'
+      ScriptArguments: '-resourcegroup "${{parameters.resourcegroup}}" -subscriptionid "${{parameters.subscriptionid}}" -topicname "{{parameters.topicname}}" -storageaccount "{{parameters.storageaccount}}"'
       azurePowerShellVersion: LatestVersion
