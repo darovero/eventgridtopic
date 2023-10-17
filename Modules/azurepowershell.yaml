@@ -1,0 +1,8 @@
+# install-dotnet.yml
+
+steps:
+- task: UseDotNet@2
+  displayName: 'Install .NET SDK'
+  inputs:
+    packageType: 'sdk'
+    installationPath: $(Agent.ToolsDirectory)/dotnet
