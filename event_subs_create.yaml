@@ -1,0 +1,40 @@
+trigger:
+- none
+
+pool:
+  vmImage: 'windows-latest'
+
+parameters:
+- name: resourcegroup
+  displayName: 'Resource Group Name'
+  type: string
+- name: subscriptionid
+  displayName: 'Subscription Id'
+  type: string
+- name: topicname
+  displayName: 'Topic Name'
+  type: string
+- name: storageaccount
+  displayName: 'Storage Account Name'
+  type: string
+  values:
+  - 'Non-Prod'
+  - 'Prod'
+
+variables:
+  - group: ${{parameters.environment}}
+
+
+jobs:
+- job: CreateEventSubscription
+  steps:
+
+  - template: Modules/azurepowershell.yaml
+
+  - task: AzurePowerShell@5
+    displayName: 'Create Event Subscription Script'
+    inputs:
+      azureSubscription: $(azureSubscription)
+      ScriptPath: '$(Build.SourcesDirectory)/Templates/Scripts/key_vault_info.ps1'
+      ScriptArguments: '-resourcegroup "${{parameters.resourcegroup}}" -subscriptionid "${{parameters.subscriptionid}} -topicname "{{parameters.topicname}}" -storageaccount "{{parameters.storageaccount}}"'
+      azurePowerShellVersion: LatestVersion
