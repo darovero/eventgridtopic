@@ -34,7 +34,7 @@ jobs:
 
   - template: Modules/azurepowershell.yaml
 
-  - task: PowerShell@2
+  - task: AzurePowerShell@5
     displayName: 'Create Event Subscription Script'
     inputs:
       azureSubscription: $(azureSubscription)
