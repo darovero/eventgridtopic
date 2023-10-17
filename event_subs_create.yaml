@@ -17,6 +17,9 @@ parameters:
 - name: storageaccount
   displayName: 'Storage Account Name'
   type: string
+- name: environment
+  displayName: 'Environment'
+  type: string
   values:
   - 'Non-Prod'
   - 'Prod'
