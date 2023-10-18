@@ -1,20 +1,16 @@
-
-param(
-    [string]$resourcegroup,
-    [string]$subscriptionid,
-    [string]$topicname,
-    [string]$storageaccount
-)
-
 # Event Grid Subscription Creation
 
 # Import data from the CSV file
 $csvFile = Import-Csv -Path ".\config.csv"
 
 # Variable definition
+$resourceGroupName = "devk8slab01"
+$subscriptionId = "c7142d9c-6420-4b6d-a608-d8b19fd4604b"
+$topicName = "devk8slabevgr01"
+$storageAccountName = "devk8slabsto10"
 $ttlInSeconds = 3600
 
-# Iteration in each row of CSV file
+# Iteration through each row of the CSV file
 foreach ($row in $csvFile) {
 
     # Gets the values of the columns ID_queueName and ID_includedEventTypes
@@ -22,35 +18,43 @@ foreach ($row in $csvFile) {
     $includedEventTypes = $row.ID_includedEventTypes
 
     # Check if the Event Subscription already exists
-    $existingSubscription = Get-AzEventGridSubscription -ResourceGroupName $resourcegroup -EventSubscriptionName $queueName -TopicName $topicName -ErrorAction SilentlyContinue
+    $existingSubscription = Get-AzEventGridSubscription -ResourceGroupName $resourceGroupName -EventSubscriptionName $queueName -TopicName $topicName -ErrorAction SilentlyContinue
 
     if ($existingSubscription -ne $null) {
         Write-Host "Event Subscription '$queueName' already exists for topic '$topicName'. Skipping creation."
     }
     else {
-	
-        # Check if the storage queue exists and if not, it will be created
-        $storageAccount = Get-AzStorageAccount -ResourceGroupName $resourcegroup -Name $storageaccount
-        $queue = Get-AzStorageQueue -Context $storageAccount.Context -Name $queueName 2>$null
+        # Check if the storage queue exists, and if not, create it
+        $storageAccount = Get-AzStorageAccount -ResourceGroupName $resourceGroupName -Name $storageAccountName
 
-        if ($queue -eq $null) {
-            New-AzStorageQueue -Context $storageAccount.Context -Name $queueName > $null
+        if ($storageAccount -eq $null) {
+            Write-Host "Storage account '$storageAccountName' does not exist in resource group '$resourceGroupName'. Cannot create the queue."
         }
+        else {
+            # Verify if the storage queue exists
+            $queue = Get-AzStorageQueue -Context $storageAccount.Context -Name $queueName -ErrorAction SilentlyContinue
 
-        # Build the endpoint in the correct format
-        $endpoint = "/subscriptions/$subscriptionid/resourceGroups/$resourcegroup/providers/Microsoft.Storage/storageAccounts/$storageaccount/queueServices/default/queues/$queueName"
+            if ($queue -eq $null) {
+                # The storage queue does not exist, create it
+                New-AzStorageQueue -Context $storageAccount.Context -Name $queueName
+                Write-Host "Storage Queue '$queueName' created in the storage account."
+            }
 
-        # Create the subscription in Azure Event Grid with the TTL configured
-        New-AzEventGridSubscription `
-          -EventSubscriptionName $queueName `
-          -ResourceGroupName $resourcegroup `
-          -TopicName $topicname `
-          -EndpointType StorageQueue `
-          -Endpoint $endpoint `
-          -IncludedEventType $includedEventTypes `
-          -AdvancedFilteringOnArray `
-          -StorageQueueMessageTtl $ttlInSeconds
+            # Build the endpoint in the correct format
+            $endpoint = "/subscriptions/$subscriptionId/resourceGroups/$resourceGroupName/providers/Microsoft.Storage/storageAccounts/$storageAccountName/queueServices/default/queues/$queueName"
 
-        Write-Host "Event Subscription '$queueName' created for topic '$topicname'."
+            # Create the subscription in Azure Event Grid with the configured TTL
+            New-AzEventGridSubscription `
+              -EventSubscriptionName $queueName `
+              -ResourceGroupName $resourceGroupName `
+              -TopicName $topicName `
+              -EndpointType StorageQueue `
+              -Endpoint $endpoint `
+              -IncludedEventType $includedEventTypes `
+              -AdvancedFilteringOnArray `
+              -StorageQueueMessageTtl $ttlInSeconds
+
+            Write-Host "Event Subscription '$queueName' created for topic '$topicName'."
+        }
     }
 }
