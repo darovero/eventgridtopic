@@ -38,5 +38,5 @@ jobs:
     inputs:
       azureSubscription: $(azureSubscription)
       ScriptPath: '$(Build.SourcesDirectory)/Scripts/event_subs_create.ps1'
-      ScriptArguments: '-resourcegroup "${{parameters.resourcegroup}}" -subscriptionid "${{parameters.subscriptionid}}" -topicname "{{parameters.topicname}}" -storageaccount "{{parameters.storageaccount}}"'
+      ScriptArguments: '-resourcegroup "${{parameters.resourcegroupname}}" -subscriptionid "${{parameters.subscriptionid}}" -topicname "{{parameters.topicname}}" -storageaccount "{{parameters.storageaccountname}}"'
       azurePowerShellVersion: LatestVersion
