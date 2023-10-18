@@ -27,7 +27,6 @@ parameters:
 variables:
   - group: ${{parameters.environment}}
 
-
 jobs:
 - job: CreateEventSubscription
   steps:
