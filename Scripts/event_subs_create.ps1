@@ -20,21 +20,21 @@ foreach ($row in $csvFile) {
     # Check if the Event Subscription already exists
     $existingSubscription = Get-AzEventGridSubscription -ResourceGroupName $resourceGroupName -EventSubscriptionName $queueName -TopicName $topicName -ErrorAction SilentlyContinue
 
-    if ($existingSubscription -ne $null) {
+    if ($null -ne $existingSubscription) {
         Write-Host "Event Subscription '$queueName' already exists for topic '$topicName'. Skipping creation."
     }
     else {
         # Check if the storage queue exists, and if not, create it
         $storageAccount = Get-AzStorageAccount -ResourceGroupName $resourceGroupName -Name $storageAccountName
 
-        if ($storageAccount -eq $null) {
+        if ($null -eq $storageAccount) {
             Write-Host "Storage account '$storageAccountName' does not exist in resource group '$resourceGroupName'. Cannot create the queue."
         }
         else {
             # Verify if the storage queue exists
             $queue = Get-AzStorageQueue -Context $storageAccount.Context -Name $queueName -ErrorAction SilentlyContinue
 
-            if ($queue -eq $null) {
+            if ($null -eq $queue) {
                 # The storage queue does not exist, create it
                 New-AzStorageQueue -Context $storageAccount.Context -Name $queueName
                 Write-Host "Storage Queue '$queueName' created in the storage account."
