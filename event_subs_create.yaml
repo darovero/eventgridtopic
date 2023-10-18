@@ -5,7 +5,7 @@ pool:
   vmImage: 'windows-latest'
 
 parameters:
-- name: resourcegroup
+- name: resourcegroupname
   displayName: 'Resource Group Name'
   type: string
 - name: subscriptionid
@@ -14,7 +14,7 @@ parameters:
 - name: topicname
   displayName: 'Topic Name'
   type: string
-- name: storageaccount
+- name: storageaccountname
   displayName: 'Storage Account Name'
   type: string
 - name: environment
